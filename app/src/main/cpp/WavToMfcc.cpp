@@ -12,12 +12,8 @@
  */
  
 #include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h> // for memcmp
-#include <stdint.h> // for int16_t and int32_t
 #include <math.h>
-#include <iostream>
 #include "libmfccOptim.h"
 #include "FFTReal.h"
 #include "WavToMfcc.h"

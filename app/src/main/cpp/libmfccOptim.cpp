@@ -10,7 +10,6 @@
 
 #include <math.h>
 #include "libmfccOptim.h"
-#include <iostream>
 
 /*
 * Computes the specified (mth) MFCC
