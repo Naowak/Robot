@@ -39,19 +39,19 @@ g.resize(n_ck*n_cunk);
 
 
     for(int j=1;j<n_cunk+1;j++ ) {
-        g[0 + j*n_cunk] = inf;
+        g[0][j] = inf;
     }
 
 
     for (int i=1;i<n_ck+1;i++) {
-        g[i * n_ck +0] = inf;
+        g[i][0] = inf;
     }
 
 
     for (int i=1;i<n_ck+1;i++) {
         for (int j=max(2,i-contrainte);i<min(n_cunk+1,i+contrainte);i++) {
-             int d = fevalDistance( distance , sequence1 ,sequence2 ,  i-1, j-1);
-             g[i * n_ck + j*n_cunk] = d + min(g[(i* n_ck)-1 + j]), g[(i* n_ck)-1 + (j*n_cunk)-1],  g[(i* n_ck)+(j*n_cunk)-1]);
+             int d = distance_vect(c_k ,c_unk , n_ck, n_cunk);
+             g[i][j] = d + min(g[i-1][j]), g[i-1][j-1],  g[i][j-1]);
 
 
         }
@@ -69,8 +69,8 @@ g.resize(n_ck*n_cunk);
 
 int main() {
 
-int sequence1 = {1,2,3,4,5,6};
-int sequence2 = {1,2,3,4,5,6};
+float* sequence1 = {1,2,3,4,5,6};
+float* sequence2 = {1,2,3,4,5,6};
 
 float result = dtw(6,6,sequence1,sequence2);
 return 0;
@@ -88,6 +88,4 @@ float distance_vect(vector<vector <float>> sequence1, vector<vector<float>> sequ
 	return sqrt(d);
 }
 
-int main(){
-	return 0;
-}
+
