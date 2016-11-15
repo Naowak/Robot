@@ -13,9 +13,9 @@ using namespace std;
 void print(vector<vector<float> > g,int taille1,int taille2) {
     for (int i=0;i<taille1;i++) {
         for(int j=0;j<taille2;j++) {
-            cout<<g[i][j]<<endl;
+            cout<<g[i][j]<<" -------- ";
         }
-
+        cout<<"\n";
 
     }
 }
@@ -47,7 +47,7 @@ float dist_float(float* sequence1,float* sequence2,int i,int j) {
 */
 
 float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
-    cout<<"start"<<endl;
+
     vector<vector<float> > g;
     int contrainte = 0;
     g.resize(n_ck);
@@ -55,44 +55,43 @@ float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
             g[i].resize(n_cunk);
 
     }
-    cout<<"step1"<<endl;
+
 	double inf=1.0/0.0;
 	//int contrainte = max(contrainte, abs(n_ck-n_cunk));
-     cout<<"step2"<<endl;
+
 
 
     for(int j=0;j<n_cunk;j++ ) {
-         cout<<"step3"<<endl;
+
         g[0][j] = inf;
 
     }
 
 
     for (int i=0;i<n_ck;i++) {
-         cout<<"step4"<<endl;
+
          g[i][0] = inf;
     }
-     cout<<"step5"<<endl;
-
-
+    g[0][0] = 0;
+    print(g,n_ck,n_cunk);
     for (int i=1;i<n_ck;i++) {
-            cout<<"2"<<endl;
-        for (int j=1;j<n_cunk;j++) {
-             cout<<"3"<<endl;
-             float d = dist_float(c_k ,c_unk , i-1, j-1);
-             cout<<"4"<<endl;
-             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ), min(g[i-1][j-1],g[i][j-1]) );
-             cout<<j<<"<"<<n_cunk<<endl;
 
+        for (int j=1;j<n_cunk;j++) {
+
+             float d = dist_float(c_k ,c_unk , i-1, j-1);
+
+             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ), min(g[i-1][j-1],g[i][j-1]) );
+             print(g,n_ck,n_cunk);
+            cout<<endl;
 
         }
-        cout<<"4"<<endl;
+
 
 
     }
-    cout<<"4"<<endl;
 
-    print(g,n_ck,n_cunk);
+
+
 
     return (g[n_ck-1][n_cunk-1]/n_ck+n_cunk);
 
