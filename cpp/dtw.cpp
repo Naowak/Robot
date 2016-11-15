@@ -10,11 +10,13 @@
 
 using namespace std;
 
-void print(vector<vector<int> > matrice , int ligne , int colonne) {
-    for (int i=0;i<ligne;i++) {
-        for (int j=0;j<colonne;j++) {
+void print(vector<vector<float> > matrice ) {
+    for (int i=0;i<matrice.size();i++) {
+        for(int j=0;j<matrice.size();j++) {
             cout<<matrice[i][j]<<endl;
         }
+
+
     }
 }
 
@@ -50,8 +52,8 @@ g.resize(n_ck*n_cunk);
 
     for (int i=1;i<n_ck+1;i++) {
         for (int j=max(2,i-contrainte);i<min(n_cunk+1,i+contrainte);i++) {
-             int d = distance_vect(c_k ,c_unk , n_ck, n_cunk);
-             g[i][j] = d + min(g[i-1][j]), g[i-1][j-1],  g[i][j-1]);
+             float d = distance_vect(c_k ,c_unk , n_ck, n_cunk);
+             g[i][j] = d + min(g[i-1][j], g[i-1][j-1],  g[i][j-1]);
 
 
         }
@@ -59,10 +61,10 @@ g.resize(n_ck*n_cunk);
 
     }
 
-    print(g,n_ck,n_cunk);
+    print(g);
 
 
-    return (g(n_ck+1,n_cunk+1))/(n_ck+n_cunk);
+    return (g[n_ck+1][n_cunk+1])/(n_ck+n_cunk);
 
 
 }
