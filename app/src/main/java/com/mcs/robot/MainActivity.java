@@ -21,8 +21,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AddSound.NewSound {
 
+
+    private static final String DIALOG = "tag_dialog";
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp.wav";
+        path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PROJET_MCS/";
         Log.w(path, path);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,8 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT); //on a pas trouvé le .wav
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        recorder.setOutputFile(path);
         fab.setOnClickListener(this);
+        findViewById(R.id.saveb).setOnClickListener(this);
+        findViewById(R.id.testb).setOnClickListener(this);
+        fab.setVisibility(View.GONE);
 
         // Example of a call to a native method
         tv = (TextView) findViewById(R.id.sample_text);
@@ -132,27 +136,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.fab:
-                if (inrecord) {
-                    Toast.makeText(this, "Enregistrement Terminé", Toast.LENGTH_SHORT).show();
-                    recorder.stop();
-                    recorder.reset();
-                    inrecord = false;
-                } else {
-                    Toast.makeText(this, "Enregistrement en cours", Toast.LENGTH_SHORT).show();
-                    try {
-                        recorder.prepare();
-                        recorder.start();
-                        inrecord = true;
-                    } catch (IOException e) {
-                        Toast.makeText(this, "Erreur lors de la preparation du recorder", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    } catch (Throwable t) {
-                        Toast.makeText(this, "Erreur lors du lancement de l'enregistrement", Toast.LENGTH_SHORT).show();
-                        t.printStackTrace();
-                    }
-                }
+            case R.id.saveb: {
+                AddSound dialogAddItem = new AddSound();
+                dialogAddItem.show(getSupportFragmentManager(), DIALOG);
+                // on crée un callback entre l'activité et le Dialog, voir la définition du callback
+                // dans la classe DialogAddItem
+                dialogAddItem.setCallback(this);
+                break;
+            }
 
+            case R.id.testb: {
+                break;
+            }
+            case R.id.fab: {
+                findViewById(R.id.linearb).setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
+                Toast.makeText(this, "Enregistrement Terminé", Toast.LENGTH_SHORT).show();
+                recorder.stop();
+                recorder.reset();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void itemWasCreated(TypeAction action) {
+        findViewById(R.id.linearb).setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+        Toast.makeText(this, "Enregistrement en cours", Toast.LENGTH_SHORT).show();
+        try {
+            recorder.setOutputFile(path + action.toString() + ".wav");
+            recorder.prepare();
+            recorder.start();
+        } catch (IOException e) {
+            Toast.makeText(this, "Erreur lors de la preparation du recorder", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        } catch (Throwable t) {
+            Toast.makeText(this, "Erreur lors du lancement de l'enregistrement", Toast.LENGTH_SHORT).show();
+            t.printStackTrace();
         }
     }
 }

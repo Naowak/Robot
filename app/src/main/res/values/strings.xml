@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Robot</string>
     <string name="action_settings">Settings</string>
+    <string name="btnvalider_AddAnnonceFragment">Valider</string>
+    <string name="btnannuler_AddAnnonceFragment">Annuler</string>
+    <string name="TitreDuDialogSoundAnnonce">Ajouter un son</string>
 </resources>
