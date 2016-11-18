@@ -14,7 +14,6 @@ import java.util.List;
 
 public class AddSound extends AppCompatDialogFragment implements View.OnClickListener {
 
-    private List choice;
     private NewSound NewSound;
 
     public void setCallback(NewSound NewSound) {
@@ -31,7 +30,7 @@ public class AddSound extends AppCompatDialogFragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View layout = inflater.inflate(R.layout.fragment_addannonce, container, false);
         getDialog().setCanceledOnTouchOutside(false);
-        choice = new ArrayList();
+        List choice = new ArrayList();
         getDialog().setTitle(R.string.TitreDuDialogSoundAnnonce);
         choice.add(TypeAction.ARRETE_TOI.toString());
         choice.add(TypeAction.ATTERISSAGE.toString());
