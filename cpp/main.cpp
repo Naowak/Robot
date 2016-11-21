@@ -8,33 +8,30 @@
 #include "dtw.h"
 #include "WavToMfcc.h"
 
+
 using namespace std;
 
-void print(int16_t* signal,int length) {
-    for(int i=0;i<length;i++) {
-        cout<<signal[i]<<endl;
-    }
-    cout<<"--------------------------------------------------"<<endl;
-}
+int dim_mfcc = 13;
 
+
+/* CrÃ©er ou remplace un fichier mfc reprÃ©sentent un nouveau mot
+ * (IN) file name
+ * (OUT) MFC
+ * (OUT) MFC Length
+*/
 void toMFCC(string s, float** oSignal, int* oLength){
 	char* file = (char *)s.c_str();
 
 	FILE* file_wav;
 	struct wavfile w;
 
-	if(is_big_endian()){
-		cout<<"1.8"<<endl;
-	}
 	//lit fichier .wav
 	wavRead(&file_wav,file,&w);
-
 
 	//char buffer[sizeof(int16_t)];
 	int16_t buffer;
 	int16_t signal[w.totallength];
 	int i = 0;
-
 
 
 	while(! feof(file_wav)){
@@ -43,91 +40,131 @@ void toMFCC(string s, float** oSignal, int* oLength){
 		signal[i] = buffer;
 		i++;
 	}
-    cout<<"Avant Silence"<<endl;
-    //print(signal,w.totallength);
-    cout<<"taille : "<<w.totallength<<endl;
+
+
 
 	int16_t* sSignal;
 	int newLength;
 
 
-	removeSilence(signal, w.totallength, &sSignal, &newLength,1/100);
-
-	cout<<"Après RemoveSilence"<<endl;
-    //print(sSignal,newLength);
-    cout<<"new taille : "<<newLength<<endl;
+	removeSilence(signal, w.totallength, &sSignal, &newLength, (float)1/100);
 
 	float* xMFCC;
 	int xLength;
 
 
-	computeMFCC(&xMFCC, &xLength, sSignal, newLength, w.frequency, 512, 256, 12, 26);
+
+	computeMFCC(&xMFCC, &xLength, sSignal, newLength, w.frequency, 512, 256, dim_mfcc, 26);
 
 	*oSignal = xMFCC;
 	*oLength = xLength;
 
-	cout<<xMFCC<<endl;
-	/*cout<<"frequence : "<<w.frequency<<endl;
+	//cout<<"frequence : "<<w.frequency<<endl;
+
+	/*
 	cout<<"taille MFC : "<<xLength<<endl;
 	for(int i =0; i <xLength; i++){
-		cout<<xMFCC[i]<<endl;
+		for(int j = 0;j<dim_mfcc;j++){
+			cout<<xMFCC[i*dim_mfcc+j]<<" -- ";
+		}
+		cout<<endl;
 	}*/
 
 }
 
-//Compare un nouveau mot à la base de donner pour trouver quel ordre a été donner
-float compareMFC(string name_file) {
-    float* signal;
+/* Compare un nouveau mot Ã  la base de donner pour trouver quel ordre a Ã©tÃ© donner
+*/
+float compareMFC(string name_file, string compareTo){
+
+	float* signal;
 	int length;
+
+	int lengthTo;
+
 	toMFCC(name_file, &signal, &length);
 
-    /**
-    * Transform the wav extension into mfc extension.
-    *
-    * @param filename (IN) pointer to the name of the file
-    * @param mfcName OUT) pointer to the new name of the file with .mfc ext
-    * @return none
-    */
-    //void nameWavToMfc(char *filename, char * mfcName);
-    char mfcName;
-    char* char_name_file = (char*)name_file.c_str();
-    nameWavToMfc(char_name_file,&mfcName);
+	char* mfcName = (char *)compareTo.c_str();
 
+	FILE* fileTo;
+	fileTo = fopen(mfcName, "r");
+	fread(&lengthTo,sizeof(int), 1, fileTo);
+	float signalTo[lengthTo*dim_mfcc];
+
+
+
+	for(int i = 0; i<lengthTo*dim_mfcc;i++){
+		fread(&signalTo[i],sizeof(float), 1, fileTo);
+	}
+
+
+
+
+
+	float ret = dtw(length, lengthTo, dim_mfcc, signal, signalTo);
+	cout<<"Score: "<<ret<<endl;
+	return ret;
+}
+
+/**
+* Calcul la MFC d'un fichier audio et l'enregistre dans un fichier mfc
+*/
+void saveMFC(string wavFile){
+	float* signal;
+	int length;
+	toMFCC(wavFile, &signal, &length);
+	char mfcName[wavFile.size()];
+	nameWavToMfc((char *) wavFile.c_str(), mfcName);
+
+	FILE* mfcFile = fopen(mfcName, "w");
+
+	string cLength = ""+length;
+
+	fwrite(&length,sizeof(int),1,mfcFile);
+
+
+	fwrite(signal,sizeof(float),length*dim_mfcc,mfcFile);
+
+	fclose(mfcFile);
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
-/*float* sequence1 = new float[2];
+	/*float* sequence1 = new float[2];
 	sequence1[0] = 1.1;
 	sequence1[1] = 1.2;
 	float* sequence2 = new float[3];
 	sequence2[0] = 2.2;
 	sequence2[1] = 2.8;
-	sequence2[2] = 2.4;*/
+	sequence2[2] = 2.4;
+*/
 
 
-	string s1 = "corpus/corpus/dronevolant_bruite/M01_arretetoi.wav";
-	string s2 = "corpus/corpus/dronevolant_bruite/M01_arretetoi.wav";
+	string s = "M05_arretetoi.wav";
 
-	float* signal1;
-	int length1;
+	float* signal;
+	int length;
 
-	float* signal2;
-	int length2;
+	//toMFCC(s, &signal, &length);
 
-	toMFCC(s1, &signal1, &length1);
-	toMFCC(s2, &signal2, &length2);
+	//saveMFC(s);
 
+
+	compareMFC("F01_etatdurgence.wav","M01_arretetoi.mfc");
+
+
+
+	/*
 	float result;
-	result = dtw(length1,length2,13,signal2,signal1);
-	//result = dtw(3,2,13,sequence1,sequence2);
+	result = dtw(length,length,13,signal,signal);
 
 
 	//cout<<"fin"<<endl;
-	cout<<"score : " <<result<<endl;
+	cout<<result<<endl;*/
 
 	/*delete[] sequence1;
 	delete[] sequence2;*/
 	return 0;
+
+
 }

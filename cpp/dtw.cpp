@@ -12,10 +12,11 @@ using namespace std;
 
 void print(vector<vector<float> > g,int taille1,int taille2) {
     for (int i=0;i<taille1;i++) {
+		cout<<"{ ";
         for(int j=0;j<taille2;j++) {
-            cout<<g[i][j]<<" -------- ";
+            cout<<g[i][j]<<"-";
         }
-        cout<<"\n";
+        cout<<" }\n";
 
     }
 }
@@ -25,15 +26,16 @@ float dist_float(float* sequence1,float* sequence2,int i,int j) {
 
 }
 
-/*float distance_vect(float* sequence1, float* sequence2, int i, int j){
+float distance_vect(float* sequence1, float* sequence2, int i, int j, int dim_mfcc){
 	float d = 0;
-	int taille = sequence1.front().size();
 	int cmp;
-	for(cmp = 0; cmp < taille; ++cmp){
-		d += pow(sequence1.at(i).at(cmp) - sequence2.at(i).at(cmp), 2);
+	for(cmp = 0; cmp < dim_mfcc; ++cmp){
+        //cout<<d<<endl;
+		d += pow(sequence1[i*dim_mfcc+cmp] - sequence2[j*dim_mfcc+cmp], 2);
 	}
+	double inf=1.0/0.0;
 	return sqrt(d);
-}*/
+}
 
 /**
 * Dtw function that given two matrix of cep coefficient computes distance
@@ -49,13 +51,14 @@ float dist_float(float* sequence1,float* sequence2,int i,int j) {
 float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
 
     vector<vector<float> > g;
-
+    int contrainte = 0;
     g.resize(n_ck+1);
     for(int i=0;i<n_ck+1;i++) {
             g[i].resize(n_cunk+1);
 
     }
 	double inf=1.0/0.0;
+
 	//int contrainte = max(contrainte, abs(n_ck-n_cunk));
 
 
@@ -73,22 +76,23 @@ float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
     }
     g[0][0] = 0;
     //print(g,n_ck+1,n_cunk+1);
-    for (int i=1;i<n_ck+1;i++) {
 
+	int cpt = 0;
+
+    for (int i=1;i<n_ck+1;i++) {
         for (int j=1;j<n_cunk+1;j++) {
 
-             float d = dist_float(c_k ,c_unk , i-1, j-1);
+             float d = distance_vect(c_k ,c_unk , i-1, j-1, dim_mfcc);
 
-             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ),g[i-1][j-1] );
-             //print(g,n_ck+1,n_cunk+1);
-           // cout<<endl;
+             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ), g[i-1][j-1]);
+             cout<<g[i][j];
 
         }
+        cout<<endl;
 
 
 
     }
-
 
 
 

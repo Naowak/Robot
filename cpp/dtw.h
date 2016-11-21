@@ -19,6 +19,6 @@
 */
 float dtw(int n_ck, int n_cunk, int dim_mfcc, float * c_k, float * c_unk);
 
-float distance_vect(std::vector<std::vector<float> > sequence1, std::vector<std::vector<float> >  sequence2, int i, int j);
+float distance_vect(std::vector<std::vector<float> > sequence1, std::vector<std::vector<float> >  sequence2, int i, int j,int dim_mfcc);
 
 #endif
