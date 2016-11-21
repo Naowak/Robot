@@ -49,40 +49,39 @@ float dist_float(float* sequence1,float* sequence2,int i,int j) {
 float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
 
     vector<vector<float> > g;
-    int contrainte = 0;
-    g.resize(n_ck);
-    for(int i=0;i<n_ck;i++) {
-            g[i].resize(n_cunk);
+
+    g.resize(n_ck+1);
+    for(int i=0;i<n_ck+1;i++) {
+            g[i].resize(n_cunk+1);
 
     }
-
 	double inf=1.0/0.0;
 	//int contrainte = max(contrainte, abs(n_ck-n_cunk));
 
 
 
-    for(int j=0;j<n_cunk;j++ ) {
+    for(int j=0;j<n_cunk+1;j++ ) {
 
         g[0][j] = inf;
 
     }
 
 
-    for (int i=0;i<n_ck;i++) {
+    for (int i=0;i<n_ck+1;i++) {
 
          g[i][0] = inf;
     }
     g[0][0] = 0;
-    print(g,n_ck,n_cunk);
-    for (int i=1;i<n_ck;i++) {
+    //print(g,n_ck+1,n_cunk+1);
+    for (int i=1;i<n_ck+1;i++) {
 
-        for (int j=1;j<n_cunk;j++) {
+        for (int j=1;j<n_cunk+1;j++) {
 
              float d = dist_float(c_k ,c_unk , i-1, j-1);
 
-             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ), min(g[i-1][j-1],g[i][j-1]) );
-             print(g,n_ck,n_cunk);
-            cout<<endl;
+             g[i][j] = d + min(min(g[i-1][j],g[i][j-1] ),g[i-1][j-1] );
+             //print(g,n_ck+1,n_cunk+1);
+           // cout<<endl;
 
         }
 
@@ -93,36 +92,14 @@ float dtw(int n_ck, int n_cunk, int dim_mfcc, float* c_k, float* c_unk) {
 
 
 
-    return (g[n_ck-1][n_cunk-1]/n_ck+n_cunk);
+    return (g[n_ck][n_cunk])/(n_ck+n_cunk);
 
 
 }
 
 
 
-int main() {
 
-float* sequence1 = new float[2];
-sequence1[0] = 1.1;
-sequence1[1] = 1.2;
-float* sequence2 = new float[3];
-sequence2[0] = 2.2;
-sequence2[1] = 2.8;
-sequence2[2] = 2.4;
-
-
-
-float result;
-result = dtw(2,3,13,sequence1,sequence2);
-cout<<"fin"<<endl;
-cout<<result<<endl;
-
-delete[] sequence1;
-delete[] sequence2;
-return 0;
-
-
-}
 
 
 
