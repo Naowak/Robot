@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
         findViewById(R.id.saveb).setOnClickListener(this);
-        findViewById(R.id.testb).setOnClickListener(this);
+        findViewById(R.id.corpusb).setOnClickListener(this);
 
         // Example of a call to a native method
         tv = (TextView) findViewById(R.id.sample_text);
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
 
-            case R.id.testb: {
+            case R.id.corpusb: {
                 break;
             }
             case R.id.fab: {

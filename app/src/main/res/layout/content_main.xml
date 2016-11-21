@@ -30,13 +30,13 @@
         android:visibility="visible">
 
         <Button
-            android:id="@+id/testb"
+            android:id="@+id/corpusb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="50"
             android:background="@color/colorBackgroundButton"
-            android:text="Tester"
+            android:text="Corpus"
             android:textColor="@color/colorTextButton" />
 
         <Button
